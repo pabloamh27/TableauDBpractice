@@ -1,0 +1,49 @@
+cluster name = Cluster_Replicacion;
+
+node 1 admin conninfo='dbname=dvdrental host=localhost user=postgres password=12345';
+
+node 2 admin conninfo='dbname=dvdrental_slave host=localhost user=postgres password=12345';
+
+init cluster(id=1, comment='MAESTRO');
+
+create set (id=1, origin=1, comment='All pgbench tables');
+set add table (set id=1, origin=1, id=1, fully qualified name = 'public.actor', comment='actor');
+set add table (set id=1, origin=1, id=2, fully qualified name = 'public.address', comment='address');
+set add table (set id=1, origin=1, id=3, fully qualified name = 'public.category', comment='category');
+set add table (set id=1, origin=1, id=4, fully qualified name = 'public.city', comment='city');
+set add table (set id=1, origin=1, id=5, fully qualified name = 'public.country', comment='country');
+set add table (set id=1, origin=1, id=6, fully qualified name = 'public.customer', comment='customer');
+set add table (set id=1, origin=1, id=7, fully qualified name = 'public.film', comment='film');
+set add table (set id=1, origin=1, id=8, fully qualified name = 'public.film_actor', comment='film_actor');
+set add table (set id=1, origin=1, id=9, fully qualified name = 'public.film_category', comment='film_category');
+set add table (set id=1, origin=1, id=10, fully qualified name = 'public.inventory', comment='inventory');
+set add table (set id=1, origin=1, id=11, fully qualified name = 'public.language', comment='language');
+set add table (set id=1, origin=1, id=12, fully qualified name = 'public.payment', comment='payment');
+set add table (set id=1, origin=1, id=13, fully qualified name = 'public.rental', comment='rental');
+set add table (set id=1, origin=1, id=14, fully qualified name = 'public.staff', comment='staff');
+set add table (set id=1, origin=1, id=15, fully qualified name = 'public.store', comment='store');
+set add table (set id=1, origin=1, id=16, fully qualified name = 'public.film_dim', comment='Film_dim');
+set add table (set id=1, origin=1, id=17, fully qualified name = 'public.category_subdim', comment='Category_subdim');
+set add table (set id=1, origin=1, id=18, fully qualified name = 'public.actor_subdim', comment='Actor_subdim');
+set add table (set id=1, origin=1, id=19, fully qualified name = 'public.film_x_actor', comment='film_x_actor');
+set add table (set id=1, origin=1, id=20, fully qualified name = 'public.film_x_category', comment='film_x_category');
+set add table (set id=1, origin=1, id=21, fully qualified name = 'public.country_subdim', comment='Country_subdim');
+set add table (set id=1, origin=1, id=22, fully qualified name = 'public.city_subdim', comment='City_subdim');
+set add table (set id=1, origin=1, id=23, fully qualified name = 'public.address_dim', comment='Address_dim');
+set add table (set id=1, origin=1, id=24, fully qualified name = 'public.date_dim', comment='Date_dim');
+set add table (set id=1, origin=1, id=25, fully qualified name = 'public.sucursal_dim', comment='Sucursal_dim');
+set add table (set id=1, origin=1, id=26, fully qualified name = 'public.hechos', comment='Hechos');
+set add table (set id=1, origin=1, id=27, fully qualified name = 'public.payment_register', comment='payment_register');
+
+
+
+store node (id=2, comment = 'Slave node', EVENT NODE=1);
+store path (server = 1, client = 2, conninfo='dbname=dvdrental host=localhost user=postgres password=12345');
+store path (server = 2, client = 1, conninfo='dbname=dvdrental_slave host=localhost user=postgres password=12345');
+
+store listen(origin=1, provider=1, receiver=2);
+
+store listen(origin=2, provider=2, receiver=1);
+
+SUBSCRIBE SET (ID=1, PROVIDER = 1, RECEIVER = 2, FORWARD = YES);
+WAIT FOR EVENT(ORIGIN=1, CONFIRMED=ALL, WAIT ON=1);

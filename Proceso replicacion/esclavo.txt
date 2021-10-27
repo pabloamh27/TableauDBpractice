@@ -1,0 +1,9 @@
+cluster name = Cluster_Replicacion;
+
+
+node 1 admin conninfo = 'dbname=dvdrental host=localhost user=postgres password=12345';
+node 2 admin conninfo = 'dbname=dvdrental_slave host=localhost user=postgres password=12345';
+
+
+
+SUBSCRIBE SET(ID=1, PROVIDER = 1, RECEIVER = 2, FORWARD = YES);
