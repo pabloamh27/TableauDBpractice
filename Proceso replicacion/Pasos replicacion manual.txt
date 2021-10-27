@@ -1,0 +1,12 @@
+1. cd C:\Program Files\PostgreSQL\9.6\bin
+NUEVA TERMINAL
+2. slonik maestro.txt
+NUEVA TERMINAL
+3. slonik esclavo.txt
+
+SOLO ESTO PARA SINCRONIZAR!
+
+NUEVA TERMINAL
+4. slon Cluster_Replicacion "dbname=dvdrental user=postgres password=12345"
+NUEVA TERMINAL
+5. slon Cluster_Replicacion "dbname=dvdrental_slave user=postgres password=12345"
